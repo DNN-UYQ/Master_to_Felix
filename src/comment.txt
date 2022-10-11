@@ -1,0 +1,46 @@
+        # Iterate all models used in the final ensemble
+
+
+    """for weight, model in automl.get_models_with_weights():
+        # Obtain the step of the underlying scikit-learn pipeline
+        print(model.steps[-2])
+        # Obtain the scores of the current feature selector
+        print(model.steps[-2][-1].choice.preprocessor.scores_)
+        # Obtain the percentile configured by Auto-sklearn
+        print(model.steps[-2][-1].choice.preprocessor.percentile)"""
+
+
+        X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X_big, y_big, random_state=1)
+    automl = autosklearn.classification.AutoSklearnClassifier(time_left_for_this_task=600, per_run_time_limit=10,
+                                                              metric=f1)
+    automl.fit(X_train, y_train)
+    predictions = automl.predict(X_test)
+    print("f1 score", sklearn.metrics.f1_score(y_test, predictions))
+    print(f"Accuracy score: {accuracy_score(y_test, predictions): 6.3f}")
+    print("Accuracy score", sklearn.metrics.accuracy_score(y_test, predictions))
+    X_train_adult, X_test_adult, y_train_adult, y_test_adult = adult_dataset()
+    X_big_adult = featurize(X_train_adult, y_train_adult, X_test_adult, clf_list)
+    predictions_adult = automl.predict(X_big_adult)
+    print("f1 score (adult_dataset)", sklearn.metrics.f1_score(y_test_adult, predictions_adult))
+    print("Accuracy score adult_dataset", sklearn.metrics.accuracy_score(y_test_adult, predictions_adult))
+
+
+    id= load_list("id_training_datasets.npy")
+print(id)
+clf_list= pickle.load(open("classifier_list.dat", "rb"))
+print("clflist",clf_list)
+time_start=time.time()
+X_list,y_list =data_download(id,clf_list)
+x_y=[]
+for i in range(len(X_list)):
+    combined_unified_data = np.column_stack((X_list[i], y_list[i]))
+    x_y.append(combined_unified_data)
+df = pd.DataFrame(np.vstack(x_y))
+df.to_excel("train_unified_data.xlsx")
+print("timee",time.time()-time_start)
+
+
+
+
+
+
